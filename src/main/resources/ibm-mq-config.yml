@@ -1,0 +1,83 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: ibm-mq
+  labels:
+    app: ibm-mq
+spec:
+  containers:
+    - resources:
+        limits:
+          cpu: '1'
+          memory: 600Mi
+        requests:
+          cpu: '1'
+          memory: 600Mi
+      name: ibm-mq
+      ports:
+        - containerPort: 1414
+          protocol: TCP
+        - containerPort: 9443
+          protocol: TCP
+  containerStatuses:
+      image: 'nexus-ci/docker-lib/ibm_mq:latest'
+
+---
+   
+kind: Service
+apiVersion: v1
+metadata:
+  name: ibm-mq
+spec:
+  type: NodePort
+  ports:
+    - name: admin
+      protocol: TCP
+      port: 9443
+      targetPort: 9443
+    - name: application
+      protocol: TCP
+      port: 1414
+      targetPort: 1414
+  selector:
+    app: ibm-mq
+
+---
+
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: ibm-mq-admin
+spec:
+  host: ibm-mq-admin.my-domain.com
+  to:
+    kind: Service
+    name: ibm-mq
+    weight: 100
+  port:
+    targetPort: admin
+  tls:
+    termination: passthrough
+    insecureEdgeTerminationPolicy: None
+  wildcardPolicy: None
+
+---
+
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: ibm-mq-app
+spec:
+  host: ibm-mq-app.my-domain.com
+  to:
+    kind: Service
+    name: ibm-mq
+    weight: 100
+  port:
+    targetPort: application
+  tls:
+    termination: passthrough
+    insecureEdgeTerminationPolicy: None
+  wildcardPolicy: None
+
+---
