@@ -14,14 +14,12 @@ spec:
           cpu: '1'
           memory: 600Mi
       name: ibm-mq
+      image: 'icr.io/ibm-messaging/mq:9.3.0.17-r1'
       ports:
         - containerPort: 1414
           protocol: TCP
         - containerPort: 9443
           protocol: TCP
-  containerStatuses:
-      image: 'icr.io/ibm-messaging/mq:9.3.0.17-r1'
-
 ---
    
 kind: Service
