@@ -20,6 +20,10 @@ spec:
           protocol: TCP
         - containerPort: 9443
           protocol: TCP
+      environment:
+      - LICENSE: accept
+      - MQ_QMGR_NAME: QM1
+      restartPolicy: OnFailure
 ---
    
 kind: Service
