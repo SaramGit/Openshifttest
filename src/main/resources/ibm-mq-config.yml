@@ -20,7 +20,7 @@ spec:
         - containerPort: 9443
           protocol: TCP
   containerStatuses:
-      image: 'nexus-ci/docker-lib/ibm_mq:latest'
+      image: 'icr.io/ibm-messaging/mq:9.3.0.17-r1'
 
 ---
    
