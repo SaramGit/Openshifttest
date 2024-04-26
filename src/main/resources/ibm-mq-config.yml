@@ -1,31 +1,31 @@
-kind: Pod
 apiVersion: v1
+kind: Pod
 metadata:
   name: ibm-mq
   labels:
-    app: ibm-mq
+    app: ibm-mq       
 spec:
-  containers:
-    - resources:
-        limits:
-          cpu: '1'
-          memory: 600Mi
-        requests:
-          cpu: '1'
-          memory: 600Mi
-      name: ibm-mq
-      image: 'docker.io/ibmcom/mq'
-      ports:
-        - containerPort: 1414
-          protocol: TCP
-        - containerPort: 9443
-          protocol: TCP
-      environment:
-      - LICENSE=accept
-      - MQ_QMGR_NAME=QM1
-      volumes:
-      - ibmmq:/data/ibmmq
-      container_name: ibmmq
+  containers:                            
+  - env:                                 
+    - name: LICENSE
+      value: accept
+    - name: MQ_QMGR_NAME
+      value: QM1
+    image: 'docker.io/ibmcom/mq'
+    imagePullPolicy: IfNotPresent
+    name: ibm-mq
+    ports:                              
+    - containerPort: 1414
+      protocol: TCP
+    - containerPort: 9443
+      protocol: TCP
+    resources: {}
+    securityContext: { ... }            
+    readOnly: true
+  restartPolicy: Always                 
+  serviceAccount: default               
+  volumes: 
+  name: ibm-mq                             
 ---
    
 kind: Service
@@ -45,43 +45,5 @@ spec:
       targetPort: 1414
   selector:
     app: ibm-mq
-
----
-
-kind: Route
-apiVersion: route.openshift.io/v1
-metadata:
-  name: ibm-mq-admin
-spec:
-  host: ibm-mq-admin.my-domain.com
-  to:
-    kind: Service
-    name: ibm-mq
-    weight: 100
-  port:
-    targetPort: admin
-  tls:
-    termination: passthrough
-    insecureEdgeTerminationPolicy: None
-  wildcardPolicy: None
-
----
-
-kind: Route
-apiVersion: route.openshift.io/v1
-metadata:
-  name: ibm-mq-app
-spec:
-  host: ibm-mq-app.my-domain.com
-  to:
-    kind: Service
-    name: ibm-mq
-    weight: 100
-  port:
-    targetPort: application
-  tls:
-    termination: passthrough
-    insecureEdgeTerminationPolicy: None
-  wildcardPolicy: None
 
 ---
