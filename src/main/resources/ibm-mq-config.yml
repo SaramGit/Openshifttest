@@ -14,16 +14,18 @@ spec:
           cpu: '1'
           memory: 600Mi
       name: ibm-mq
-      image: 'icr.io/ibm-messaging/mq:9.3.0.17-r1'
+      image: 'docker.io/ibmcom/mq'
       ports:
         - containerPort: 1414
           protocol: TCP
         - containerPort: 9443
           protocol: TCP
       environment:
-      - LICENSE: accept
-      - MQ_QMGR_NAME: QM1
-      restartPolicy: OnFailure
+      - LICENSE=accept
+      - MQ_QMGR_NAME=QM1
+      volumes:
+      - ibmmq:/data/ibmmq
+      container_name: ibmmq
 ---
    
 kind: Service
