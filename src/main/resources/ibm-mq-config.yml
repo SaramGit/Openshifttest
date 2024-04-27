@@ -25,7 +25,7 @@ spec:
   restartPolicy: Always                 
   serviceAccount: default               
   volumes: 
-  name: ibm-mq                             
+  name: ibm-mq 
 ---
    
 kind: Service
@@ -45,5 +45,43 @@ spec:
       targetPort: 1414
   selector:
     app: ibm-mq
+
+---
+
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: ibm-mq-admin
+spec:
+  host: ibm-routes-sudhir6969-dev.apps.sandbox-m3.1530.p1.openshiftapps.com
+  to:
+    kind: Service
+    name: ibm-mq
+    weight: 100
+  port:
+    targetPort: admin
+  tls:
+    termination: passthrough
+    insecureEdgeTerminationPolicy: None
+  wildcardPolicy: None
+
+---
+
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: ibm-mq-app
+spec:
+  host: app-route-mq-sudhir6969-dev.apps.sandbox-m3.1530.p1.openshiftapps.com
+  to:
+    kind: Service
+    name: ibm-mq
+    weight: 100
+  port:
+    targetPort: application
+  tls:
+    termination: passthrough
+    insecureEdgeTerminationPolicy: None
+  wildcardPolicy: None
 
 ---
